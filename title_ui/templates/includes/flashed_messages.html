@@ -1,0 +1,33 @@
+{% with messages = get_flashed_messages(with_categories=True) %}
+  {% for group in messages|groupby(0) %}
+    {% if group.grouper == 'error' %}
+      <div class="error-summary" role="alert" aria-labelledby="flashed-error-summary-heading" tabindex="-1">
+
+        <h2 class="heading-medium error-summary-heading" id="flashed-error-summary-heading">Errors</h2>
+
+        <ul class="error-summary-list">
+          {% for category, message in group.list %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% else %}
+      <div class="warning media" tabindex="-1">
+        <div class="media__item">
+          <i class="icon icon-important">
+            <span class="visuallyhidden"></span>
+          </i>
+        </div>
+
+        <div class="media__body" role="alert" aria-labelledby="flashed-messages-heading">
+          <h2 class="heading-medium" id="flashed-messages-heading">Information</h2>
+          <ul class="spacing-top-flush">
+            {% for category, message in group.list %}
+              <li>{{ message }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endwith %}

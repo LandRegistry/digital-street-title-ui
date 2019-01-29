@@ -1,0 +1,55 @@
+// GOV.UK design system
+$govuk-images-path: '/ui/.govuk-frontend/images/';
+$govuk-fonts-path: '/ui/.govuk-frontend/fonts/';
+@import 'govuk-frontend/all';  // Feel free to be more selective than this
+
+// App specific code
+@import 'partials/cookie-banner';
+
+.title table {
+	margin: 5px;
+	border: 1px solid black;
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.title table th {
+	text-align: right;
+	vertical-align: top;
+	font-weight: bold;
+	width: 20%;
+	padding-right: 10px;
+}
+
+.title table th,
+.title table td {
+	padding: 3px;
+}
+
+.title table tr > *:first-child {
+	padding-left: 10px;
+}
+.title table tr > *:last-child {
+	padding-right: 10px;
+}
+
+.title table tr:first-child {
+	border-bottom: 1px solid lightgrey;
+}
+
+.title table tr:first-child th {
+	text-align: left;
+}
+
+.charge-target {
+	-webkit-transition: background-color 500ms linear;
+}
+
+.highlighted-charge {
+	background-color: lightsalmon;
+	-webkit-transition: background-color 50ms;
+}
+
+.nolink {
+	color: black;
+}
