@@ -1,8 +1,11 @@
 import unittest
 from unittest import mock
-from title_ui.main import app
+
 from flask import render_template_string
-from title_ui.custom_extensions.jinja_markdown_filter.main import JinjaMarkdownFilter
+
+from title_ui.custom_extensions.jinja_markdown_filter.main import \
+    JinjaMarkdownFilter
+from title_ui.main import app
 
 
 class TestJinjaMarkdownFilter(unittest.TestCase):
@@ -53,16 +56,18 @@ class TestJinjaMarkdownFilter(unittest.TestCase):
 
     def test_render_returns_govuk_html_for_paragraph(self):
         markdown_to_html = {
-            'Foo\n\nBar\n\nWibble': '<p class="govuk-body">Foo</p><p class="govuk-body">Bar</p><p class="govuk-body">Wibble</p>',
-
+            'Foo\n\nBar\n\nWibble':
+                '<p class="govuk-body">Foo</p><p class="govuk-body">Bar</p><p class="govuk-body">Wibble</p>',
         }
 
         self.check_rendering(markdown_to_html)
 
     def test_render_returns_govuk_html_for_link(self):
         markdown_to_html = {
-            '[Foo](http://foo.com)': '<p class="govuk-body"><a class="govuk-link" href="http://foo.com">Foo</a></p>',
-            '[Foo](http://foo.com "Title here")': '<p class="govuk-body"><a class="govuk-link" href="http://foo.com" title="Title here">Foo</a></p>'
+            '[Foo](http://foo.com)':
+                '<p class="govuk-body"><a class="govuk-link" href="http://foo.com">Foo</a></p>',
+            '[Foo](http://foo.com "Title here")':
+                '<p class="govuk-body"><a class="govuk-link" href="http://foo.com" title="Title here">Foo</a></p>'
         }
 
         self.check_rendering(markdown_to_html)

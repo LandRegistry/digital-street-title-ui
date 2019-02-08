@@ -1,7 +1,7 @@
-from flask import Blueprint, render_template, current_app, url_for, redirect, request
-import requests
-import json
 from datetime import datetime
+
+import requests
+from flask import Blueprint, current_app, render_template, request
 
 # This is the blueprint object that gets registered into the app in blueprints.py.
 index = Blueprint('index', __name__)
