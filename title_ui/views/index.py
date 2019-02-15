@@ -1,10 +1,14 @@
 from datetime import datetime
-
+from babel import numbers
 import requests
+import json
+import os.path
 from flask import Blueprint, current_app, render_template, request
 
 # This is the blueprint object that gets registered into the app in blueprints.py.
 index = Blueprint('index', __name__)
+
+extras_filepath = 'extras.json'
 
 
 @index.route("/")
@@ -26,6 +30,21 @@ def index_page():
 
         titles = []
         titles.append(r.json())
+
+        if not titles:
+            return render_template('app/index.html', titles=None, title_number=None, error="Cannot find title")
+
+        title = process(titles)[0]
+
+        title['updated_at_date'] = datetime.strptime(title['updated_at'], '%Y-%m-%dT%H:%M:%S.%f').strftime('%d %B %Y')
+        title['updated_at_time'] = datetime.strptime(title['updated_at'], '%Y-%m-%dT%H:%M:%S.%f').strftime('%H:%M:%S')
+
+        extras = None
+        if os.path.isfile(extras_filepath):
+            with open(extras_filepath) as json_file:
+                extras = json.load(json_file)
+
+        return render_template('app/single-title.html', title=title, extras=extras, title_number=title_number)
     elif request.args.get('owner_email_address'):
         r = requests.get(current_app.config['TITLE_API_URL'] + '/titles',
                          params={"owner_email_address": request.args.get('owner_email_address')},
@@ -37,10 +56,12 @@ def index_page():
 
         titles = r.json()
 
-    if titles:
-        titles = process(titles)
+        if titles:
+            titles = process(titles)
 
-    return render_template('app/index.html', titles=titles, title_number=title_number, error=None)
+        return render_template('app/multi-title.html', titles=titles, title_number=title_number, error=None)
+
+    return render_template('app/index.html', titles=None, title_number=None, error=None)
 
 
 def process(titles):
@@ -50,6 +71,21 @@ def process(titles):
     ]
 
     for title_idx, title in enumerate(titles):
+        if not title['updated_at']:
+            titles[title_idx]['updated_at'] = title['created_at']
+
+        for price_idx, price in enumerate(title['price_history']):
+            titles[title_idx]['price_history'][price_idx]['price_pretty'] = numbers.format_currency(
+                price['amount'] / 100,
+                price['currency_code']
+            ).replace(".00", "")
+
+            date_pretty = datetime.fromtimestamp(price['date']).strftime('%d %B %Y')
+            titles[title_idx]['price_history'][price_idx]['date_pretty'] = date_pretty
+
+            date_full_pretty = datetime.fromtimestamp(price['date']).strftime('%d %B %Y %H:%M:%S')
+            titles[title_idx]['price_history'][price_idx]['date_full_pretty'] = date_full_pretty
+
         for restriction_idx, restriction in enumerate(title['restrictions']):
             if 'charge' in restriction:
                 titles[title_idx]['charges'].append(restriction['charge'])

@@ -1,0 +1,196 @@
+{% extends "app/layout.html" %}
+
+{% from 'app/vendor/.govuk-frontend/components/back-link/macro.html' import govukBackLink %}
+{% from 'app/vendor/.govuk-frontend/components/breadcrumbs/macro.html' import govukBreadcrumbs %}
+{% from 'app/vendor/.govuk-frontend/components/button/macro.html' import govukButton %}
+{% from 'app/vendor/.govuk-frontend/components/details/macro.html' import govukDetails %}
+{% from 'app/vendor/.govuk-frontend/components/footer/macro.html' import govukFooter %}
+{% from 'app/vendor/.govuk-frontend/components/header/macro.html' import govukHeader %}
+{% from 'app/vendor/.govuk-frontend/components/inset-text/macro.html' import govukInsetText %}
+{% from 'app/vendor/.govuk-frontend/components/panel/macro.html' import govukPanel %}
+{% from 'app/vendor/.govuk-frontend/components/phase-banner/macro.html' import govukPhaseBanner %}
+{% from 'app/vendor/.govuk-frontend/components/skip-link/macro.html' import govukSkipLink %}
+{% from 'app/vendor/.govuk-frontend/components/table/macro.html' import govukTable %}
+{% from 'app/vendor/.govuk-frontend/components/tabs/macro.html' import govukTabs %}
+{% from 'app/vendor/.govuk-frontend/components/warning-text/macro.html' import govukWarningText %}
+{% from 'app/vendor/.govuk-frontend/components/checkboxes/macro.html' import govukCheckboxes %}
+{% from 'app/vendor/.govuk-frontend/components/date-input/macro.html' import govukDateInput %}
+{% from 'app/vendor/.govuk-frontend/components/error-message/macro.html' import govukErrorMessage %}
+{% from 'app/vendor/.govuk-frontend/components/error-summary/macro.html' import govukErrorSummary %}
+{% from 'app/vendor/.govuk-frontend/components/fieldset/macro.html' import govukFieldset %}
+{% from 'app/vendor/.govuk-frontend/components/file-upload/macro.html' import govukFileUpload %}
+{% from 'app/vendor/.govuk-frontend/components/input/macro.html' import govukInput %}
+{% from 'app/vendor/.govuk-frontend/components/radios/macro.html' import govukRadios %}
+{% from 'app/vendor/.govuk-frontend/components/select/macro.html' import govukSelect %}
+{% from 'app/vendor/.govuk-frontend/components/textarea/macro.html' import govukTextarea %}
+
+
+{% block content %}
+  {% if title is none %}
+    {{ govukBackLink({
+      'text': "Start again",
+      'href': url_for(request.endpoint)
+    }) }}
+    
+    Error
+  {% else %}
+    {{ govukBackLink({
+      'text': "Start again",
+      'href': url_for(request.endpoint)
+    }) }}
+
+    <div class="govuk-grid-row">
+      <div class="title-summary">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">
+              {{ title.address.house_name_number }}<br>
+              {{ title.address.street }}<br>
+              {{ title.address.town_city }}<br>
+              {{ title.address.postcode }}<hr>
+            </h1>
+            <p class="govuk-body">
+              This register was last changed on <strong>{{ title.updated_at_date }}</strong> at <strong>{{ title.updated_at_time }}</strong>
+            </p>
+          </div>
+          <div class="govuk-grid-column-one-third">
+              <div class="img-section">
+                  <img src="{{ url_for('static', filename='images/app/map-view.png') }}" alt="An image of the property's boundary">
+                  <p class="govuk-body-s">Boundary of the property.</p>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <p class="govuk-body">
+          <strong>Title number: </strong>{{ title.title_number }}<br><br>
+
+          {% if extras.tenure_type %}
+            <strong>Tenure type: </strong>{{ extras.tenure_type }}<br><br>
+          {% endif %}
+          {% if extras.title_class %}
+            <strong>Class of title: </strong>{{ extras.title_class }}<br><br>
+          {% endif %}
+
+          {% if extras.property_description %}
+            <strong>Property description:</strong><br>
+            {{ extras.property_description|safe }}<br><br>
+          {% endif %}
+
+          <strong>Contact details:</strong><br>
+          {{ title.owner.first_name }} {{ title.owner.last_name }}<br>
+          {{ title.owner.address.house_name_number }},<br>
+          {{ title.owner.address.street }},<br>
+          {{ title.owner.address.town_city }},<br>
+          {{ title.owner.address.county }},<br>
+          {{ title.owner.address.country }},<br>
+          {{ title.owner.address.postcode }}<br>
+          {{ title.owner.email_address }}
+        </p>
+
+        {% if title.price_history %}
+          <table class="govuk-table">
+            <caption class="govuk-table__caption">Price history</caption>
+            <tbody class="govuk-table__body">
+              {% for price_date in title.price_history|sort(attribute='date',reverse=True) %}
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell">{{ price_date.price_pretty }}</td>
+                  <td class="govuk-table__cell">Sold</td>
+                  <td class="govuk-table__cell">
+                    <span title="{{ price_date.date_full_pretty }}">{{ price_date.date_pretty }}</span>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% endif %}
+
+        {% if extras.restrictions %}
+          <h2 class="govuk-heading-l">Things that affect this property</h2>
+          {% if extras.restrictions.this_property %}
+            <p class="govuk-body"><strong>This property:</strong></p>
+            <ul class="govuk-list govuk-list--bullet">
+              {% for data in extras.restrictions.this_property %}
+                <li>{{ data|safe }} <a class="govuk-link" href="#this-property">(source)</a></li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+          {% if extras.restrictions.you_cant %}
+            <p class="govuk-body"><strong>You can't:</strong></p>
+            <ul class="govuk-list govuk-list--bullet">
+              {% for data in extras.restrictions.you_cant %}
+                <li>{{ data|safe }} <a class="govuk-link" href="#you-cant">(source)</a></li>
+              {% endfor %}
+            </ul>
+          {% endif %} 
+          {% if extras.restrictions.you_can %}       
+            <p class="govuk-body"><strong>You can:</strong></p>
+            <ul class="govuk-list govuk-list--bullet">
+              {% for data in extras.restrictions.you_can %}
+                <li>{{ data|safe }} <a class="govuk-link" href="#you-can">(source)</a></li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+          {% if extras.restrictions.other_people %}
+            <p class="govuk-body"><strong>Other people can use your land. The:</strong></p>
+            <ul class="govuk-list govuk-list--bullet">
+              {% for data in extras.restrictions.other_people %}
+                <li>{{ data|safe }} <a class="govuk-link" href="#other-people">(source)</a></li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endif %}
+
+        <p class="govuk-body"><a class="govuk-link" href="#legal-copy">Download a legal copy of this information</a></p>
+      </div>
+      <div class="govuk-grid-column-one-third">
+        <p class="govuk-body"><strong>HMLR documents:</strong><br>
+          <a class="govuk-link" href="#official-copy">Official copy of the register</a><br>
+          <a class="govuk-link" href="#title-plan">Title plan</a>
+        </p>
+        <p class="govuk-body"><strong>Your documents:</strong><br>
+          <a class="govuk-link" href="#mortgage-deed">Mortgage deed</a><br>
+          <a class="govuk-link" href="#gas">Gas certificate</a><br>
+          <a class="govuk-link" href="#renovations">Renovations information</a><br>
+          <a class="govuk-link" href="#planning-restrictions">Planning restrictions</a><br>
+          <a class="govuk-link" href="#surveyor-report">Surveyor report</a><br>
+          <a class="govuk-link" href="#presales-contract">Pre-sale property contract</a>
+        </p>
+        <p class="govuk-body"><strong>Things you can do:</strong><br>
+          <a class="govuk-link" href="#change-details">Change your details</a><br>
+          <a class="govuk-link" href="#upload-documents">Upload documents</a></br>
+          <a class="govuk-link" href="#gift">Gift this property</a><br>
+          <a class="govuk-link" href="#sell">Sell this property</a><br>
+        </p>
+        <p class="govuk-body">View your local authority <a class="govuk-link" href="#search">searches document</a> or <a class="govuk-link" href="#map">view on a map</a></p>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block footer %}
+{{ govukFooter({
+  'meta': {
+    'items': [
+      {
+        'href': "#",
+        'text': "Help"
+      },
+      {
+        'href': "#",
+        'text': "Cookies"
+      },
+      {
+        'href': "#",
+        'text': "Contact"
+      },
+      {
+        'href': "#",
+        'text': "Terms and conditions"
+      }
+    ]
+  }
+}) }}
+{% endblock %}

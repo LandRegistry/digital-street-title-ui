@@ -51,8 +51,7 @@ ENV APP_NAME=title-ui \
   FLASK_DEBUG=1 \
   CONTENT_SECURITY_POLICY_MODE='full' \
   STATIC_ASSETS_MODE='development' \
-  TITLE_API_URL='http://title-api:8080/v1' \
-  HMLR_API_URL='http://host.docker.internal:8083/api'
+  TITLE_API_URL='http://title-api:8080/v1'
 
 CMD ["./run.sh"]
 

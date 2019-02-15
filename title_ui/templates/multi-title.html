@@ -1,0 +1,136 @@
+{% extends "app/layout.html" %}
+
+{% from 'app/vendor/.govuk-frontend/components/back-link/macro.html' import govukBackLink %}
+{% from 'app/vendor/.govuk-frontend/components/breadcrumbs/macro.html' import govukBreadcrumbs %}
+{% from 'app/vendor/.govuk-frontend/components/button/macro.html' import govukButton %}
+{% from 'app/vendor/.govuk-frontend/components/details/macro.html' import govukDetails %}
+{% from 'app/vendor/.govuk-frontend/components/footer/macro.html' import govukFooter %}
+{% from 'app/vendor/.govuk-frontend/components/header/macro.html' import govukHeader %}
+{% from 'app/vendor/.govuk-frontend/components/inset-text/macro.html' import govukInsetText %}
+{% from 'app/vendor/.govuk-frontend/components/panel/macro.html' import govukPanel %}
+{% from 'app/vendor/.govuk-frontend/components/phase-banner/macro.html' import govukPhaseBanner %}
+{% from 'app/vendor/.govuk-frontend/components/skip-link/macro.html' import govukSkipLink %}
+{% from 'app/vendor/.govuk-frontend/components/table/macro.html' import govukTable %}
+{% from 'app/vendor/.govuk-frontend/components/tabs/macro.html' import govukTabs %}
+{% from 'app/vendor/.govuk-frontend/components/warning-text/macro.html' import govukWarningText %}
+{% from 'app/vendor/.govuk-frontend/components/checkboxes/macro.html' import govukCheckboxes %}
+{% from 'app/vendor/.govuk-frontend/components/date-input/macro.html' import govukDateInput %}
+{% from 'app/vendor/.govuk-frontend/components/error-message/macro.html' import govukErrorMessage %}
+{% from 'app/vendor/.govuk-frontend/components/error-summary/macro.html' import govukErrorSummary %}
+{% from 'app/vendor/.govuk-frontend/components/fieldset/macro.html' import govukFieldset %}
+{% from 'app/vendor/.govuk-frontend/components/file-upload/macro.html' import govukFileUpload %}
+{% from 'app/vendor/.govuk-frontend/components/input/macro.html' import govukInput %}
+{% from 'app/vendor/.govuk-frontend/components/radios/macro.html' import govukRadios %}
+{% from 'app/vendor/.govuk-frontend/components/select/macro.html' import govukSelect %}
+{% from 'app/vendor/.govuk-frontend/components/textarea/macro.html' import govukTextarea %}
+
+
+{% block content %}
+  {{ govukBackLink({
+    'text': "Start again",
+    'href': url_for(request.endpoint)
+  }) }}
+  {{ govukFieldset({
+    'legend': {
+      'text': "Title Search",
+      'classes': "govuk-fieldset__legend--xl",
+      'isPageHeading': true
+    }
+  }) }}
+
+  <div class="titles">
+    {% for title in titles %}
+    <div class="title">
+      <table>
+        <tr>
+          <th class="govuk-body" colspan="2"><a class="nolink" href="{{ url_for(request.endpoint, title_number=title.title_number) }}">{{ title.title_number }}</a></td>
+        </tr>
+        <tr>
+          <th class="govuk-body">Owner</th>
+          <td class="govuk-body">
+            {{ title.owner.first_name }} {{ title.owner.last_name }} ({{ title.owner.identity }})
+          </td>
+        </tr>
+        <tr>
+          <th class="govuk-body">Address</th>
+          <td class="govuk-body">
+            {{ title.address.house_name_number }}<br>
+            {{ title.address.street }}<br>
+            {{ title.address.town_city }}<br>
+            {{ title.address.county }}<br>
+            {{ title.address.country }}<br>
+            {{ title.address.postcode }}
+          </td>
+        </tr>
+        <tr>
+          <th class="govuk-body">Charges</th>
+          <td class="govuk-body">
+              {% if title.charges %}
+              <ul>
+                {% for charge in title.charges %}
+                <li class="charge-target">
+                  {% if 'html_id' in charge %}<a id="charge-{{ charge.html_id }}"></a>{% endif %}<b>Lender:</b> {{ charge.lender_string }}<br>
+                  <b>Date:</b> {{ charge.date }}<br>
+                  <b>Amount:</b> {{ charge.amount }} {{ charge.amount_currency_code }}
+                </li>
+                {% endfor %}
+              </ul>
+              {% else %}
+              <span>None</span>
+              {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <th class="govuk-body">Restrictions</th>
+          <td class="govuk-body">
+            {% if title.restrictions %}
+            <ul>
+              {% for restriction in title.restrictions %}
+              <li>
+                <b>{% if restriction.restriction_type == "CBCR" %}Charge {% endif %}Restriction:</b> {{ restriction.restriction_id }}<br>
+                <b>Date:</b> Created at {{ restriction.date }}<br>
+                {% if not restriction.charge %}
+                  <b>Consenting Party:</b> {{ restriction.consenting_party_string }}<br>
+                {% endif %}
+                {% if restriction.charge %}
+                  <b>Charge:</b> <a class="charge-link" href="#charge-{{ restriction.charge.html_id }}">Go to referenced charge</a><br>
+                {% endif %}
+                <b>Restriction:</b> <i>{{ restriction.restriction_text }}</i>
+              </li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <span>None</span>
+            {% endif %}
+          </td>
+        </tr>
+      </table>
+    </div>
+    {% endfor %}
+  </div>
+{% endblock %}
+
+{% block footer %}
+{{ govukFooter({
+  'meta': {
+    'items': [
+      {
+        'href': "#",
+        'text': "Help"
+      },
+      {
+        'href': "#",
+        'text': "Cookies"
+      },
+      {
+        'href': "#",
+        'text': "Contact"
+      },
+      {
+        'href': "#",
+        'text': "Terms and conditions"
+      }
+    ]
+  }
+}) }}
+{% endblock %}

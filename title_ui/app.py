@@ -27,5 +27,5 @@ def inject_global_values():
     """
 
     return dict(
-        service_name='Title UI'
+        service_name='View your title'
     )

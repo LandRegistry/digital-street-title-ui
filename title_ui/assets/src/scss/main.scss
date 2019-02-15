@@ -53,3 +53,27 @@ $govuk-fonts-path: '/ui/.govuk-frontend/fonts/';
 .nolink {
 	color: black;
 }
+
+.title-summary {
+	margin: 0 0 30px 0;
+	padding: 40px 30px 15px 30px;
+	color: white !important;
+	background-color: #005ea5;
+}
+
+.title-summary h1 {
+	color: white;
+}
+
+.title-summary p {
+	color: white;
+}
+
+.img-section {
+	text-align: center;
+}
+
+.img-section img {
+	border: 2px solid white;
+	height: 250px;
+}

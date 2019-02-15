@@ -25,16 +25,6 @@
 {% from 'app/vendor/.govuk-frontend/components/textarea/macro.html' import govukTextarea %}
 
 
-{% block title %}Title UI{% endblock %}
-
-{% block header %}
-  {{ govukHeader({
-    'homepageUrl': "/",
-    'serviceName': "Title UI",
-    'serviceUrl': "#"
-  }) }}
-{% endblock %}
-
 {% block content %}
   {% if titles is not none %}
     {{ govukBackLink({

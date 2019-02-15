@@ -48,4 +48,3 @@ CONTENT_SECURITY_POLICY_MODE = os.environ['CONTENT_SECURITY_POLICY_MODE']
 #   - Add cachebusters to static asset query strings to invalidate browsers' caches when necessary
 STATIC_ASSETS_MODE = os.environ['STATIC_ASSETS_MODE']
 TITLE_API_URL = os.environ['TITLE_API_URL']
-HMLR_API_URL = os.environ['HMLR_API_URL']
